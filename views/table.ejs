@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>COVID-19 Database</title>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+		<style>
+body {font-family: Arial;}
+
+/* Style the tab */
+.tab {
+  overflow: hidden;
+  border: 1px solid #ccc;
+  background-color: #f1f1f1;
+}
+
+/* Style the buttons inside the tab */
+.tab button {
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+  font-size: 17px;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+  background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+  background-color: #ccc;
+}
+
+/* Style the tab content */
+.tabcontent {
+  display: none;
+  padding: 20px 40px;
+  border: 1px solid #ccc;
+  border-top: none;
+}
+
+.choices {
+	display: inline-block;
+	width: 200px
+}
+
+.table {
+	display: inline-block;
+	vertical-align: top;
+}
+
+table {
+	table-layout: fixed;
+}
+
+th, td {
+	border: 1px solid black;
+}
+
+span {
+  padding-bottom: 50px;
+}
+
+
+	</style>
+	</head>
+	<body>
+	<h1>CSE 412: Covid-19 Statistics Database</h1>
+	<div class="tab">
+	<button class="tablinks" onclick="openTab(event, 'Colleges')">Colleges</button>
+	<button class="tablinks" onclick="openTab(event, 'CountyFips')">County FIPS and Names</button>
+	<button class="tablinks" onclick="openTab(event, 'MaskUse')">Mask Use</button>
+	<button class="tablinks" onclick="openTab(event, 'Prisons')">Prisons</button>
+	<button class="tablinks" onclick="openTab(event, 'USCounties')">Recent US Counties</button>
+	</div>
+	
+	<div id="Colleges" class="tabcontent">
+		<h3>Colleges Database Result</h3>
+		<form id="user_form" name="user_form" class="choices">
+			<label for="ipeds_id">IPEDS ID</label><br>
+			<span><input type="text" id="ipeds_id" name="ipeds_id"><br></span>
+			<label for="county">County</label><br>
+			<span><input type="text" id="county" name="county"><br></span>
+			<label for="state">State</label><br>
+			<span><input type="text" id="state" name="state"><br></span>
+			<label for="date">Date</label><br>
+			<span><input type="text" id="date" name="date"><br></span>
+			<label for="city">City</label><br>
+			<span><input type="text" id="city" name="city"><br></span>
+			<label for="college">College</label><br>
+			<span><input type="text" id="college" name="college"><br></span>
+			<label for="cases">Cases</label><br>
+			<span><input type="text" id="cases" name="cases"><br></span>
+			<button style="padding: 10px 10px" type="button" onclick="filterColleges(ipeds_id.value, county.value, state.value, date.value, city.value, college.value, cases.value)">Query</button> 
+		</form>
+		<table name="ctable" id="ctable" class="table"></table> 
+		<br />
+	</div>
+	<div id="CountyFips" class="tabcontent">
+		<h3>County Fips and Name</h3>
+		<form id="user_form" name="user_form" class="choices">
+			<label for="CFIPS">FIPS</label><br>
+			<span><input type="text" id="FIPS" name="CFIPS"><br></span>
+			<label for="CFName">Name</label><br>
+			<span><input type="text" id="CFName" name="CFName"><br></span>
+			<button style="padding: 10px 10px" type="button" onclick="filterCounty(CFIPS.value, CFName.value)">Query</button> 
+		</form>
+		<table name="cftable" id="cftable" class="table"></table> 
+		<br />
+	</div>
+	<div id="MaskUse" class="tabcontent">
+		<h3>Mask Use</h3>
+		<form id="user_form" name="user_form" class="choices">
+			<label for="mfips">FIPS</label><br>
+			<span><input type="text" id="mfips" name="mfips"><br></span>
+			<label for="mnever">Never</label><br>
+			<span><input type="text" id="mnever" name="mnever"><br></span>
+			<label for="mrarely">Rarely</label><br>
+			<span><input type="text" id="mrarely" name="mrarely"><br></span>
+			<label for="msometimes">Sometimes</label><br>
+			<span><input type="text" id="msometimes" name="msometimes"><br></span>
+			<label for="mfrequently">Frequently</label><br>
+			<span><input type="text" id="mfrequently" name="mfrequently"><br></span>
+			<label for="malways">Always</label><br>
+			<span><input type="text" id="malways" name="malways"><br></span>
+			<button style="padding: 10px 10px" type="button" onclick="filterMask(mfips.value, mnever.value, mrarely.value, msometimes.value, mfrequently.value, malways.value)">Query</button> 
+		</form>
+		<table name="mtable" id="mtable" class="table"></table> 
+		<br />
+	</div>
+	<div id="Prisons" class="tabcontent">
+		<h3>Prisons</h3>
+		<form id="user_form" name="user_form" class="choices">
+			<label for="pnyt_id">NYT ID</label><br>
+			<span><input type="text" id="pnyt_id" name="pnyt_id"><br></span>
+<label for="pcounty">County</label><br>
+			<span><input type="text" id="pcounty" name="pcounty"><br></span>
+<label for="pfacility_name">Facility Name</label><br>
+			<span><input type="text" id="pfacility_name" name="pfacility_name"><br></span>
+<label for="pfacility_city">Facility City</label><br>
+			<span><input type="text" id="pfacility_city" name="pfacility_city"><br></span>
+<label for="pfacility_type">Facility Type</label><br>
+			<span><input type="text" id="pfacility_type" name="pfacility_type"><br></span>
+<label for="pfacility_state">Facility State</label><br>
+			<span><input type="text" id="pfacility_state" name="pfacility_state"><br></span>
+<label for="ptotal_inmate_cases">Total Inmate Cases</label><br>
+			<span><input type="text" id="ptotal_inmate_cases" name="ptotal_inmate_cases"><br></span>
+<label for="ptotal_officer_cases">Total Officer Cases</label><br>
+			<span><input type="text" id="ptotal_officer_cases" name="ptotal_officer_cases"><br></span>
+			<button style="padding: 10px 10px" type="button" onclick="filterPrisons(pnyt_id.value, pcounty.value, pfacility_name.value, pfacility_city.value, pfacility_type.value, pfacility_state.value, ptotal_inmate_cases.value, ptotal_officer_cases.value)">Query</button> 
+		</form>
+		<table name="ptable" id="ptable" class="table"></table> 
+		<br />
+	</div>
+	<div id="USCounties" class="tabcontent">
+		<h3>Recent US Counties</h3>
+		<form id="user_form" name="user_form" class="choices">
+<label for="usfips">FIPS</label><br>
+			<span><input type="text" id="S1" name="usfips"><br></span>
+<label for="usdate">Date</label><br>
+			<span><input type="text" id="S1" name="usdate"><br></span>
+<label for="usstate">State</label><br>
+			<span><input type="text" id="S1" name="usstate"><br></span>
+<label for="uscases">Cases</label><br>
+			<span><input type="text" id="S1" name="uscases"><br></span>
+<label for="usdeaths">Deaths</label><br>
+			<span><input type="text" id="S1" name="usdeaths"><br></span>
+			<button style="padding: 10px 10px" type="button" onclick="filterUSCounties(usfips.value, usdate.value, usstate.value, uscases.value, usdeaths.value)">Query</button> 
+		</form>
+		<table name="ustable" id="ustable" class="table"></table> 
+		<br />
+	</div>
+	<script src="logic.js" async defer></script>
+	</body>
+</html>
